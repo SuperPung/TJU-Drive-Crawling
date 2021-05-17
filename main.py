@@ -12,21 +12,24 @@ payload_header = {
 }
 
 
-def crawl(pan_url, password):
+def crawl(pan_url, password, old_dict):
     link = get_link(pan_url)
     data = get_data(link, password)
     text = get_text(data)
-    analysis(link, password, text)
+    new_dict = analysis(link, password, text, old_dict)
+    return new_dict
 
 
-def analysis(link, password, text):
+def analysis(link, password, text, old_dict):
     with open('./json/root.json', 'w') as f:
         json.dump(text, f)
-    display_dict('.', link, password, json.loads(text))
+    new_dict = display_dict('.', link, password, json.loads(text), old_dict)
+    return new_dict
 
 
-def display_dict(path, link, password, root_dic):
+def display_dict(path, link, password, root_dic, old_dict):
     global name, modified, docid, client_mtime, size
+    new_dict = {}
     for key in root_dic:
         dir_file_list = root_dic[key]
         if not isinstance(dir_file_list, list):
@@ -42,11 +45,15 @@ def display_dict(path, link, password, root_dic):
                         name = content
                     elif attribute == 'docid':
                         docid = content
-                print(path + '【目录】' + name + '，修改于 ' + modified)
+                message = path + '【目录】' + name + '，修改于 ' + modified
+                print(message)
+                new_dict[docid] = modified
+                if modified != old_dict[docid]:
+                    print('UPDATE', message)
                 data = get_data_with_docid(link, password, docid)
                 text = get_text(data)
                 new_path = path + '/' + name
-                display_dict(new_path, link, password, json.loads(text))
+                new_dict.update(display_dict(new_path, link, password, json.loads(text), old_dict))
 
         elif key == 'files':
             for file_dict in dir_file_list:
@@ -63,7 +70,12 @@ def display_dict(path, link, password, root_dic):
                         client_mtime = sec2time(int(content))
                     elif attribute == 'size':
                         size = str(content)
-                print(path + '【文件】' + name + '，修改于 ' + modified + '，所在目录修改于 ' + client_mtime + '，文件大小为 ' + size + ' 字节')
+                message = path + '【文件】' + name + '，修改于 ' + modified + '，所在目录修改于 ' + client_mtime + '，文件大小为 ' + size + ' 字节'
+                print(message)
+                new_dict[docid] = client_mtime
+                if client_mtime != old_dict[docid]:
+                    print('UPDATE', message)
+    return new_dict
 
 
 def get_text(data):
@@ -110,6 +122,17 @@ if __name__ == '__main__':
     if not os.path.exists(filename):
         with open(filename, 'w'):
             print(filename, '创建成功')
+    global old_dict
+    with open(filename, 'r', encoding='UTF-8') as f:
+        old_dict = json.load(f)
+
+    ############################### 下方为可修改区域 ###############################
     tju_pan_url = 'http://pan.tju.edu.cn/#/link/95A04E31C5BD079C95255EA95D16F10D'
     passwd = 'bdd5'
-    crawl(tju_pan_url, passwd)
+    ############################### 上方为可修改区域 ###############################
+
+    new_dict = crawl(tju_pan_url, passwd, old_dict)
+
+    json_str = json.dumps(new_dict)
+    with open(filename, 'w') as f:
+        f.write(json_str)
