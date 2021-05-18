@@ -161,7 +161,7 @@ def format_message(message_list):
 
 
 if __name__ == '__main__':
-    filename = os.path.dirname(__file__) + '/json/root.json'
+    filename = './json/root.json'
     if not os.path.exists(filename):
         with open(filename, 'w'):
             print(filename, '创建成功')
