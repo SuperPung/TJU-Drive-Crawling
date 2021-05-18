@@ -53,9 +53,9 @@
 
 实时获取 TJU 云盘内容更新提醒：
 
-![TJU-Drive-Crawling-demo](https://super-bucket1.oss-cn-beijing.aliyuncs.com/TJU-Drive-Crawling-demo.PNG)
+![TJU-Drive-Crawling-demo](./img/TJU-Drive-Crawling-demo.PNG)
 
-![TJU-Drive-Crawling-demo1](https://super-bucket1.oss-cn-beijing.aliyuncs.com/TJU-Drive-Crawling-demo1.PNG)
+![TJU-Drive-Crawling-demo1](./img/TJU-Drive-Crawling-demo1.PNG)
 
 
 
