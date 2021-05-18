@@ -172,12 +172,7 @@ if __name__ == '__main__':
             except json.decoder.JSONDecodeError:
                 old_dict = {}
 
-    ############################### 下方为可修改区域 ###############################
-    tju_pan_url = 'http://pan.tju.edu.cn/#/link/95A04E31C5BD079C95255EA95D16F10D'
-    passwd = 'bdd5'
-    ############################### 上方为可修改区域 ###############################
-
-    new_dict, message_to_send = crawl(tju_pan_url, passwd, old_dict)
+    new_dict, message_to_send = crawl(conf.Config.tju_pan_url, conf.Config.password, old_dict)
 
     json_str = json.dumps(new_dict)
     with open(filename, 'w') as f:
