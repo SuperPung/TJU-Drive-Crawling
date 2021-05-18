@@ -141,8 +141,8 @@ def send_email(message_subject, message_content):
     message['Subject'] = Header(subject, 'utf-8')
 
     try:
-        smtp_obj = smtplib.SMTP()
-        smtp_obj.connect(mail_host, 25)  # 25 为 SMTP 端口号
+        smtp_obj = smtplib.SMTP_SSL(mail_host)
+        smtp_obj.connect(mail_host, 465)  # 25 在服务器上不能跑
         smtp_obj.login(mail_user, mail_pass)
         smtp_obj.sendmail(sender, receiver, message.as_string())
         print("邮件发送成功")
